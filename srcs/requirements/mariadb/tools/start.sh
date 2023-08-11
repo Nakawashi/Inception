@@ -1,20 +1,32 @@
-touch tmp_file
-chmod 755 tmp_file
+#!/bin/sh
 
-cat << stop_file > tmp_file
-CREATE DATABASE '$MYSQL_DATABASE';
-USE '$MYSQL_DATABASE';
-FLUSH PRIVILEGES ;
-GRANT ALL ON *.* TO 'root'@'%' identified by '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION ;
-GRANT ALL ON *.* TO 'root'@'localhost' identified by '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION ;
-SET PASSWORD FOR 'root'@'localhost'=PASSWORD('${MYSQL_ROOT_PASSWORD}') ;
-FLUSH PRIVILEGES ;
-GRANT ALL ON \`$MYSQL_DATABASE\`.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
-DROP DATABASE IF EXISTS test ;
-FLUSH PRIVILEGES ;
-stop_file
+# Cheking if the database is already created
+cat .setup 2>/dev/null
 
-echo "Test to see if my tmp_file is correctly created"
-cat tmp_file
-mysqld --user=mysql --bootstrap --verbose=0 --skip-name-resolve --skip-networking=0 < tmp_file
-exec mysqld --user=mysql --console --skip-name-resolve --skip-networking=0 $@
+if [ $? -ne 0 ]; then
+
+  # Run the server in the background and wait for it to start up before creating the database
+  mariadb-install-db --datadir=/var/lib/mysql \
+    --auth-root-authentication-method=normal
+
+  # Give permissions to the database for the user mysql
+  chown -R mysql:mysql /var/lib/mysql
+  chown -R mysql:mysql /run/mysqld
+
+  # Start the server
+  mysqld_safe --datadir=/var/lib/mysql &
+
+  # Wait until mariadb is ready to accept connections
+  while ! mysqladmin ping -h "mariadb" --silent; do
+    sleep 1
+  done
+
+  # Create database from .sql file
+  eval "echo \"$(cat /tmp/create_db.sql)\"" | mariadb
+  touch .setup
+else
+  echo "Database already created and ready"
+fi
+
+# Run the server
+mysqld_safe --datadir=/var/lib/mysql
