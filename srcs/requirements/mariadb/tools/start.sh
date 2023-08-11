@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# You can directly use the ARG values as environment variables here
+MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
+MYSQL_DATABASE="$MYSQL_DATABASE"
+MYSQL_USER="$MYSQL_USER"
+MYSQL_PASSWORD="$MYSQL_PASSWORD"
+
 # Checking if the database is already created
 cat /docker-entrypoint-initdb.d/.setup 2>/dev/null
 
@@ -21,8 +27,8 @@ if [ $? -ne 0 ]; then
     sleep 1
   done
 
-  # Create database from .sql file
-  mariadb < /tmp/init_db.sql
+  # Create database from .sql file using environment variables
+  eval "echo \"$(cat /tmp/init_db.sql)\"" | mariadb
 
   # Touch the .setup file to indicate that the database setup is complete
   touch /docker-entrypoint-initdb.d/.setup
@@ -32,4 +38,3 @@ fi
 
 # Run the server
 exec mysqld_safe --datadir=/var/lib/mysql
-
