@@ -8,13 +8,13 @@ RUN apk update && \
 RUN mkdir -p /var/lib/mysqld /run/mysqld
 
 # Copy the database configuration file
-COPY ./conf/create_db.sql /tmp/create_db.sql
+COPY ./tools/create_db.sql /tmp/create_db.sql
 
 # Copy the server configuration file
-COPY ./conf/mariadb-server.cnf /etc/my.cnf.d/
+COPY ./conf/my-custom.cnf /etc/my.cnf.d/
 
 # Copy the script to create the database
-COPY ./scripts/entrypoint.sh /tmp/entrypoint.sh
+COPY ./tools/entrypoint.sh /tmp/entrypoint.sh
 RUN chmod +x /tmp/entrypoint.sh
 
 # Run the entrypoint script
