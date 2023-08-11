@@ -5,19 +5,17 @@ RUN apk update && \
     apk add mariadb mariadb-client && \
     rm -rf /var/cache/apk/*
 
-# Copy custom configuration file
-COPY conf/50-server.cnf /etc/mysql/my.cnf
+RUN mkdir -p /var/lib/mysqld /run/mysqld
 
-# Create necessary directories and set permissions
-RUN mkdir -p /var/run/mysqld/ && \
-    mkdir -p /run/mysqld/ && \
-    chown -R mysql:root /run/mysqld
+# Copy the database configuration file
+COPY ./conf/create_db.sql /tmp/create_db.sql
 
-# Copy the script
-COPY conf/start.sh /var/
-RUN chmod 755 /var/start.sh
+# Copy the server configuration file
+COPY ./conf/mariadb-server.cnf /etc/my.cnf.d/
 
-# Expose network port
-EXPOSE 3306
+# Copy the script to create the database
+COPY ./scripts/entrypoint.sh /tmp/entrypoint.sh
+RUN chmod +x /tmp/entrypoint.sh
 
-CMD ["sh", "/var/start.sh"]
+# Run the entrypoint script
+ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
