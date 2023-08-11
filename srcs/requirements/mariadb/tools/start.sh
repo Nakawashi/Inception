@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Cheking if the database is already created
-cat .setup 2>/dev/null
+# Checking if the database is already created
+cat /docker-entrypoint-initdb.d/.setup 2>/dev/null
 
 if [ $? -ne 0 ]; then
 
@@ -22,11 +22,14 @@ if [ $? -ne 0 ]; then
   done
 
   # Create database from .sql file
-  eval "echo \"$(cat /tmp/create_db.sql)\"" | mariadb
-  touch .setup
+  mariadb < /tmp/init_db.sql
+
+  # Touch the .setup file to indicate that the database setup is complete
+  touch /docker-entrypoint-initdb.d/.setup
 else
   echo "Database already created and ready"
 fi
 
 # Run the server
-mysqld_safe --datadir=/var/lib/mysql
+exec mysqld_safe --datadir=/var/lib/mysql
+
