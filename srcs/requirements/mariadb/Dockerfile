@@ -1,8 +1,5 @@
 FROM alpine:3.18.3
 
-# Expose network port
-EXPOSE 3306
-
 # Update packages and install MariaDB
 RUN apk update && \
     apk add mariadb mariadb-client && \
@@ -17,7 +14,10 @@ RUN mkdir -p /var/run/mysqld/ && \
     chown -R mysql:root /run/mysqld
 
 # Copy the script
-COPY conf/script.sh /var/
-RUN chmod 755 /var/script.sh
+COPY conf/start.sh /var/
+RUN chmod 755 /var/start.sh
 
-CMD ["sh", "/var/script.sh"]
+# Expose network port
+EXPOSE 3306
+
+CMD ["sh", "/var/start.sh"]
