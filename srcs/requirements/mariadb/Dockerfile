@@ -1,20 +1,23 @@
 FROM alpine:3.18.3
 
-RUN apk update && \
-	apk add mariadb mariadb-client && \
-	rm -rf /var/cache/apk/*
-
-ARG MYSQL_ROOT_PASSWORD
-ARG MYSQL_DATABASE
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-
-RUN mkdir -p /var/lib/mysqld /run/mysqld
-
-COPY ./tools/init_db.sql /tmp/init_db.sql
-COPY ./conf/my-custom.cnf /etc/mysql/my.cnf
-COPY ./tools/start.sh /docker-entrypoint-initdb.d/
-
+# Expose network port
 EXPOSE 3306
 
-CMD ["mysqld", "--user=mysql", "--console"]
+# Update packages and install MariaDB
+RUN apk update && \
+    apk add mariadb mariadb-client && \
+    rm -rf /var/cache/apk/*
+
+# Copy custom configuration file
+COPY conf/50-server.cnf /etc/mysql/my.cnf
+
+# Create necessary directories and set permissions
+RUN mkdir -p /var/run/mysqld/ && \
+    mkdir -p /run/mysqld/ && \
+    chown -R mysql:root /run/mysqld
+
+# Copy the script
+COPY conf/script.sh /var/
+RUN chmod 755 /var/script.sh
+
+CMD ["sh", "/var/script.sh"]
