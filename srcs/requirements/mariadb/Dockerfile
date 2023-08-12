@@ -13,10 +13,10 @@ RUN chmod 644 /etc/mysql/mariadb.conf.d/50-server.cnf
 
 COPY ./tools/start.sh /usr/local/bin
 
-#ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["start.sh"]
 
-RUN service mysql start && sh ./tmp/start.sh
+#RUN service mysql start && sh ./tmp/start.sh
 
 EXPOSE 3306
 
-#CMD ["mysqld_safe"]
+CMD ["mysqld_safe"]
