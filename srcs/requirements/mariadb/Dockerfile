@@ -11,11 +11,11 @@ RUN apt update && apt upgrade && apt install -y \
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 RUN chmod 644 /etc/mysql/mariadb.conf.d/50-server.cnf
 
-COPY ./tools/start.sh /usr/local/bin
+COPY ./tools/start.sh /tmp/start.sh
 
-ENTRYPOINT ["start.sh"]
+#ENTRYPOINT ["start.sh"]
 
-#RUN service mysql start && sh ./tmp/start.sh
+RUN service mysql start && sh ./tmp/start.sh
 
 EXPOSE 3306
 
