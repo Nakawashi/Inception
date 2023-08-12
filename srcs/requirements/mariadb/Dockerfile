@@ -13,8 +13,8 @@ RUN chmod 644 /etc/mysql/mariadb.conf.d/50-server.cnf
 
 COPY ./tools/init_db.sql /tmp/
 
-RUN service mysql start && \
-	sh mysql -h localhost < /tmp/init_db.sql
+RUN service mysql start 
+#	sh mysql -h localhost < /tmp/init_db.sql
 
 EXPOSE 3306
 
