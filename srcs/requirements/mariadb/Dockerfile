@@ -1,32 +1,22 @@
-FROM alpine:3.18.3
+FROM debian:buster
 
 MAINTAINER nakawashi
 
-# Set env variables inside container
-#ENV MYSQL_ROOT_PASSWORD rootpassword
-#ENV MYSQL_DATADIR /var/lib/mysql
-
 # Update packages and install MariaDB
-RUN apk update && \
-    apk add mysql mysql-client && \
-    rm -rf /var/cache/apk/*
+RUN apt update && apt upgrade && apt install -y \
+	mariadb-server \
+	vim
 
 # Copy the server configuration file
-#RUN rm /etc/my.cnf.d/mariadb-server.cnf
-#COPY ./conf/my-custom.cnf /etc/my.cnf.d/my-custom.cnf
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
+RUN chmod 644 /etc/mysql/mariadb.conf.d/50-server.cnf
 
-# Set MariaDB data dir and log dir
-#RUN mkdir -p /var/lib/mysql && \
-#	mkdir -p /var/log/mysql && \
-#	chown mysql:mysql /var/log/mysql
+COPY ./tools/start.sh /usr/local/bin
 
-# Copy the script to create the database
-#COPY ./tools/init_db.sql /docker-entrypoint-initdb.d/
-#COPY ./tools/start.sh /docker-entrypoint-initdb.d/
+#ENTRYPOINT ["start.sh"]
 
-#ENTRYPOINT ["./tools/start.sh"]
+RUN service mysql start && sh ./tmp/start.sh
 
 EXPOSE 3306
 
-# Run the entrypoint script
-#CMD ["sh", "/docker-entrypoint-initdb.d/start.sh"]
+#CMD ["mysqld_safe"]
