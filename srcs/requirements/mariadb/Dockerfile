@@ -5,17 +5,17 @@ RUN apk update && \
     apk add mariadb mariadb-client && \
     rm -rf /var/cache/apk/*
 
-RUN mkdir -p /var/lib/mysqld /run/mysqld
-
-# Copy the database configuration file
-COPY ./tools/create_db.sql /tmp/create_db.sql
-
 # Copy the server configuration file
-COPY ./conf/my-custom.cnf /etc/my.cnf.d/
+COPY ./conf/my-custom.cnf /etc/mysql/my.cnf
+
+RUN mkdir -p /var/run/mysqld /run/mysqld && \
+    chown -R mysql:root /run/mysqld
 
 # Copy the script to create the database
-COPY ./tools/entrypoint.sh /tmp/entrypoint.sh
-RUN chmod +x /tmp/entrypoint.sh
+COPY ./tools/init_db.sql /docker-entrypoint-initdb.d/
+COPY ./tools/start.sh /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
 
 # Run the entrypoint script
 ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
