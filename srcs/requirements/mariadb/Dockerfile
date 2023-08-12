@@ -18,4 +18,4 @@ COPY ./tools/start.sh /docker-entrypoint-initdb.d/
 EXPOSE 3306
 
 # Run the entrypoint script
-ENTRYPOINT ["sh", "/tmp/entrypoint.sh"]
+CMD ["sh", "/docker-entrypoint-initdb.d/start.sh"]
