@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Load environment variables from .env
-set -a
-[ -f /docker-entrypoint-initdb.d/.env ] && . /docker-entrypoint-initdb.d/.env
-set +a
+if [ -f /docker-entrypoint-initdb.d/.env ]; then
+    . /docker-entrypoint-initdb.d/.env
+fi
 
 # Run the server in the background and wait for it to start up before creating the database
 mariadb-install-db --datadir=/var/lib/mysql \
