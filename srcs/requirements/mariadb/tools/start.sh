@@ -1,4 +1,11 @@
 #!/bin/sh
 
-mysql -h localhost < init_db.sql
+mysql -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"
+mysql -e "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"
+mysql -e "GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';"
+mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQL_ROOT_PASSWORD');"
+mysql -e "FLUSH PRIVILEGES;"
 
+mysqladmin -u root -p 1234 shutdown
+
+exec "$@"
