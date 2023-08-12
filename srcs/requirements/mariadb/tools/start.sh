@@ -2,7 +2,7 @@
 
 # Load environment variables from .env
 set -a
-[ -f .env ] && . .env
+[ -f /docker-entrypoint-initdb.d/.env ] && . /docker-entrypoint-initdb.d/.env
 set +a
 
 # Run the server in the background and wait for it to start up before creating the database
