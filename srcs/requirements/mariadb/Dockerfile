@@ -8,6 +8,7 @@ RUN apk update && \
 # Copy the server configuration file
 COPY ./conf/my-custom.cnf /etc/mysql/my.cnf
 
+# Create and define access for mysql user
 RUN mkdir -p /var/run/mysqld /run/mysqld && \
     chown -R mysql:root /run/mysqld
 
