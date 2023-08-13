@@ -10,6 +10,7 @@ RUN apt update && apt upgrade && apt install -y \
 # Copy the server configuration file
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 RUN chmod 644 /etc/mysql/mariadb.conf.d/50-server.cnf
+#RUN chmod -R 755 /var/run/mysqld/
 
 COPY ./tools/start.sh /tmp/
 
