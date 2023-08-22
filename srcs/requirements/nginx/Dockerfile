@@ -4,17 +4,23 @@ MAINTAINER nakawashi
 
 RUN apt update && apt upgrade && apt install -y \
 	nginx \
-	openssl && \
+	openssl \
+	vim \
+	curl && \
 	rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /etc/nginx/ssl/private /etc/nginx/ssl/ssl_certs
+# store certificate and key
+RUN mkdir -p /etc/nginx/ssl/
 
-# RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-#     -keyout /etc/nginx/ssl/private/lgenevey.42.ch.key \
-#     -out /etc/nginx/ssl/ssl_certs/lgenevey.42.ch.crt \
-#     -subj "/C=CH/ST=Vaud/L=Lausanne/O=42/OU=42Lausanne/CN=lgenevey.42.ch"
+RUN openssl req -newkey rsa:4096 -days 365 -nodes -x509 \
+	-subj "/C=CH/ST=Vaud/L=Lausanne/O=42/OU=42Lausanne/CN=lgenevey.42.ch" \
+	-out /etc/nginx/ssl/certificate.crt \
+	-keyout /etc/nginx/ssl/private.key
 
-COPY conf/nginx.conf /etc/nginx/conf.d
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+
+RUN chmod 755 /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 443
 
