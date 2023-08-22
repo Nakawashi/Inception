@@ -12,6 +12,32 @@ services:
     restart: on-failure # "on-failure", container will be restarted
     expose:
       - "3306"
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress-data:/var/www/wordpress
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    build: ./requirements/nginx
+    env_file: .env
+    ports:
+      - "443:443"
+    restart: on-failure
+  wordpress:
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress-data:/var/www/wordpress/
+    networks:
+      - inception
+    build: ./requirements/wordpress/
+    depends_on:
+      - mariadb
+    restart: on-failure
+    expose:
+      - "9000"
 
 networks:
     inception:
@@ -25,4 +51,9 @@ volumes:
         type: 'none'
         o: 'bind'
         device: /home/nakawashi/data/mariadb-data
-        #device: /mnt/c/Users/Nakawashi/Documents/test
+    wordpress-data:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'bind'
+        device: /home/nakawashi/data/wordpress-data
