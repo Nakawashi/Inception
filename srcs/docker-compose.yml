@@ -1,31 +1,28 @@
-version: "3.8"
+version: '3'
 
 services:
-
-  # Database
   mariadb:
-    build:
-      dockerfile: Dockerfile
-      context: ./requirements/mariadb
     container_name: mariadb
-    restart: always
-    env_file: .env
-    environment:
-      - WP_DATABASE_NAME=${WP_DATABASE_NAME}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER} 
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    container_name: mariadb-container
-    volumes:
-      - /home/nakawashi/data/mariadb_data:/var/lib/mysql
     networks:
-      - docker-network
-    ports:
-      - 3306:3306
+      - inception
+    build: ./requirements/mariadb/
+    volumes:
+      - mariadb-data:/var/lib/mysql:rw
+    env_file: .env
+    restart: on-failure # "on-failure", container will be restarted
+    expose:
+      - "3306"
 
-  networks:
-    docker-network:
-      extra_hosts=${DOMAIN_NAME}
-      name: docker-network
+networks:
+    inception:
       driver: bridge
 
+# volumes used by multiple containers
+volumes:
+    mariadb-data:
+      driver: local
+      driver_opts:
+        type: 'none'
+        o: 'bind'
+        device: /home/nakawashi/data/mariadb-data
+        #device: /mnt/c/Users/Nakawashi/Documents/test

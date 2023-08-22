@@ -1,23 +1,9 @@
-# this is read by the standalone daemon and embedded servers
-[server]
+[mysql]
+default-character-set=utf8
 
 [mysqld]
-
-# default user
 user = mysql
-
-basedir = /usr
-# database storage path
 datadir = /var/lib/mysql
-
-# path to the communication socket
-socket  = /var/run/mysqld/mysqld.sock
-
-# every network IP can connect
+socket = /run/mysqld/mysqld.sock
 bind_address=*
-
-# port to communicate with other containers
 port = 3306
-
-character-set-server = utf8mb4
-collation-server = utf8mb4_general_ci

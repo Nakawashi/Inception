@@ -13,6 +13,9 @@ COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 COPY ./tools/start.sh /start.sh
 
-ENTRYPOINT ["bash", "start.sh"]
-
 EXPOSE 3306
+
+#ENTRYPOINT ["bash", "start.sh"]
+
+
+CMD ["sh", "/start.sh"]

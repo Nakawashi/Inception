@@ -19,7 +19,13 @@ MARIADB		= "mariadb"
 WORDPRESS	= "wordpress"
 ##-----------------------------------------------------------++
 
-all: 
+all:
+
+build : docker build -t mariadb:1.0 ./srcs/requirements/mariadb/
+
+deleteall : docker system prune -a --volumes -y
+
+.PHONY build deleteall
 
 ## images
 #	les lister, les builder
