@@ -9,7 +9,6 @@
 # 	curl && \
 # 	rm -rf /var/lib/apt/lists/*
 
-# RUN rm /etc/nginx/conf.d/default.conf
 # COPY conf/nginx.conf /etc/nginx/
 
 # # store certificate and key
@@ -20,7 +19,7 @@
 # 	-out /etc/nginx/ssl/certificate.crt \
 # 	-keyout /etc/nginx/ssl/private.key
 
-
+# /usr/share/nginx
 # RUN chmod 755 /var/www/html
 # RUN chown -R www-data:www-data /var/www/html
 
@@ -39,9 +38,11 @@ RUN apt update && apt upgrade && apt install -y \
 	curl && \
 	rm -rf /var/lib/apt/lists/*
 
+# COPY conf/nginx.conf /etc/nginx/
+
 # COPY index.html /usr/share/nginx/html
 
-EXPOSE 8080
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
 
