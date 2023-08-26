@@ -16,8 +16,10 @@ mv wp-cli.phar /usr/local/bin/wp
 cd /var/www/wordpress
 
 # Télécharger WordPress si le fichier de configuration n'existe pas
-if [ ! -e /var/www/wordpress/wp-config.php ]; then
+if [ ! -f /var/www/wordpress/wp-config.php]; then
 	wp core download --allow-root
+
+	echo "coucou c moi"
 	
 	# Créer le fichier de configuration WordPress
 	wp config create \

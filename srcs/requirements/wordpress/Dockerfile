@@ -15,8 +15,6 @@ RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     apt update && apt install -y php8.2 php8.2-mysql php8.2-fpm && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /run/php/ && touch /run/php/php8.2-fpm.pid
-
 RUN rm -rf /etc/php/8.2/fpm/pool.d/www.conf
 
 # end PHP
@@ -27,4 +25,5 @@ COPY ./tools/wp_install.sh /
 EXPOSE 9000
 
 ENTRYPOINT ["bash", "wp_install.sh"]
+
 CMD ["php-fpm8.2", "-F", "-R"]
