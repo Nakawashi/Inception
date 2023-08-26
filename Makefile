@@ -21,19 +21,14 @@ WORDPRESS	= "wordpress"
 
 all:
 
-build : docker build -t mariadb:1.0 ./srcs/requirements/mariadb/
+build : docker compose up
 
-deleteall : docker system prune -a --volumes -y
+stop : docker compose down
 
-.PHONY build deleteall
+destroy : docker system prune -a --volumes
 
-## images
-#	les lister, les builder
-## containers
-#	lancer les containers dans le bon ordre, les lister, les stopper
-## volumes
-#	les créer, les lister
-#
-#	lancer le script pour modifier les hosts
-#	tout faire en sudo car pas besoin de reload la session
+
+
+.PHONY build stop destroy
+
 
