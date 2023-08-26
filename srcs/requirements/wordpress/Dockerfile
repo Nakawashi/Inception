@@ -2,26 +2,31 @@ FROM debian:buster
 
 MAINTAINER nakawashi
 
-RUN apt update && apt upgrade && apt install -y
-RUN apt install wget -y
-RUN apt-get install -y php7.3\
-	php-fpm \
-	php-mysql \
-	mariadb-client && \
-	rm -rf /var/lib/apt/lists/*
+# start PHP
+RUN apt update && apt upgrade -y && apt install -y \
+    wget \
+    lsb-release \
+    apt-transport-https \
+    ca-certificates
 
-# download, unzip and give root's rights
-RUN wget https://fr.wordpress.org/wordpress-6.3-fr_FR.tar.gz -P /var/www
-RUN cd /var/www && tar -xzf wordpress-6.3-fr_FR.tar.gz && rm wordpress-6.3-fr_FR.tar.gz
-RUN chown -R root:root /var/www/wordpress
+## Ajout du dépôt PHP et installation de PHP 8.2
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
+    apt update && apt install -y php8.2 php8.2-mysql php8.2-fpm && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY ./conf/php.conf /etc/php/7.3/fpm/pool.d/www.conf
+RUN mkdir -p /run/php/ && touch /run/php/php8.2-fpm.pid
 
-# install WP CLI
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN chmod +x wp-cli.phar
-RUN mv wp-cli.phar /usr/local/bin/wp
+RUN rm -rf /etc/php/8.2/fpm/pool.d/www.conf
 
-COPY tools/auto_config.sh /auto_config.sh
+# end PHP
 
-ENTRYPOINT ["bash", "auto_config.sh"]
+COPY ./tools/wp_install.sh /
+
+COPY ./conf/ /etc/php/8.2/fpm/pool.d/
+
+EXPOSE 9000
+
+ENTRYPOINT ["bash", "wp_install.sh"]
+
+CMD ["php-fpm8.2", "-F", "-R"]

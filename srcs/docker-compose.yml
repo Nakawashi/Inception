@@ -1,21 +1,25 @@
 version: '3'
 
 services:
+
+  # database
   mariadb:
     container_name: mariadb
     networks:
       - inception
     build: ./requirements/mariadb/
     volumes:
-      - mariadb-data:/var/lib/mysql:rw
+      - volume_mariadb:/var/lib/mysql:rw
     env_file: .env
     restart: on-failure # "on-failure", container will be restarted
     expose:
       - "3306"
+
+  # web server
   nginx:
     container_name: nginx
     volumes:
-      - wordpress-data:/var/www/wordpress
+      - volume_wordpress:/var/www/wordpress
     networks:
       - inception
     depends_on:
@@ -25,11 +29,13 @@ services:
     ports:
       - "443:443"
     restart: on-failure
+
+  # wordrpress website
   wordpress:
     container_name: wordpress
     env_file: .env
     volumes:
-      - wordpress-data:/var/www/wordpress/
+      - volume_wordpress:/var/www/wordpress/
     networks:
       - inception
     build: ./requirements/wordpress/
@@ -39,21 +45,22 @@ services:
     expose:
       - "9000"
 
+# network
 networks:
-    inception:
-      driver: bridge
+  inception:
+    driver: bridge
 
 # volumes used by multiple containers
 volumes:
-    mariadb-data:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: /home/nakawashi/data/mariadb-data
-    wordpress-data:
-      driver: local
-      driver_opts:
-        type: 'none'
-        o: 'bind'
-        device: /home/nakawashi/data/wordpress-data
+  volume_mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/${LOGIN}/data/mariadb/
+  volume_wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: /home/${LOGIN}/data/wordpress/
