@@ -19,11 +19,14 @@ RUN rm -rf /etc/php/8.2/fpm/pool.d/www.conf
 
 # end PHP
 
-COPY ./conf/php.ini /etc/php/8.2/fpm/pool.d/
+COPY ./conf/php.conf /etc/php/8.2/fpm/pool.d/
+
 COPY ./tools/wp_install.sh /
+
+RUN bash wp_install.sh
 
 EXPOSE 9000
 
-ENTRYPOINT ["bash", "wp_install.sh"]
+# ENTRYPOINT ["bash", "wp_install.sh"]
 
 CMD ["php-fpm8.2", "-F", "-R"]

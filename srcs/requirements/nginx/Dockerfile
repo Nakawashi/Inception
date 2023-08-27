@@ -9,7 +9,7 @@ RUN apt update && apt upgrade && apt install -y \
 	curl && \
 	rm -rf /var/lib/apt/lists/*
 
-COPY conf/nginx.conf /etc/nginx/
+COPY ./conf/nginx.conf /etc/nginx/
 
 # store certificate and key
 RUN mkdir -p /etc/nginx/ssl/
