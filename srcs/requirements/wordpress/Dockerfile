@@ -2,7 +2,6 @@ FROM debian:buster
 
 MAINTAINER nakawashi
 
-# start PHP
 RUN apt update && apt upgrade -y && apt install -y \
     wget \
     lsb-release \
@@ -17,16 +16,14 @@ RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 
 RUN rm -rf /etc/php/8.2/fpm/pool.d/www.conf
 
-# end PHP
-
 COPY ./conf/php.conf /etc/php/8.2/fpm/pool.d/
 
 COPY ./tools/wp_install.sh /
 
 RUN bash wp_install.sh
 
-EXPOSE 9000
+RUN mkdir /run/php
 
-# ENTRYPOINT ["bash", "wp_install.sh"]
+EXPOSE 9000
 
 CMD ["php-fpm8.2", "-F", "-R"]
