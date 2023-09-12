@@ -12,25 +12,39 @@ NONE		= \033[0m
 
 DOCKER_COMPOSE_FILE	= ./srcs/docker-compose.yml
 
-## Image Names ##
-
-NGINX		= "nginx"
-MARIADB		= "mariadb"
-WORDPRESS	= "wordpress"
 ##-----------------------------------------------------------++
 
-all:
+all: volumes
 
-up : docker compose up -d
+volumes:
+	@echo "${YELLOW}Creating [mariadb] and [wordpress] volumes...${NONE}"
+	sudo mkdir /home/lgenevey/data/mariadb
+	sudo mkdir /home/lgenevey/data/wordpress
 
-build : docker compose build
+dcu: # starts the contaners in background. -f specifies the path which is not where we are as normally
+	@echo "${GREEN}Starting containers...${NONE}"
+	docker compose -f ${DOCKER_COMPOSE_FILE} up -d
 
-stop : docker compose down
+dcb: # builds image [name for specific one]
+	@echo "${BLUE}Building images...${NONE}"
+	docker compose -f ${DOCKER_COMPOSE_FILE} build
 
-destroy : docker system prune -a --volumes
+dcd: # stops the containers
+	@echo "${VIOLET}Stopping containers...${NONE}"
+	docker compose -f ${DOCKER_COMPOSE_FILE} down
 
+ps: # shows running containers
+	docker ps
 
+psa: # showd every containers
+	docker ps -a
 
-.PHONY build stop destroy
+destroy: # deletes everything 
+	@echo "${RED}Cleaning everything...${NONE}"
+	docker system prune -a --volumes
+	sudo rm -rf /home/lgenevey/data/mariadb
+	sudo rm -rf /home/lgenevey/data/wordpress
+
+.PHONY: dcu dcb dcd destroy
 
 
