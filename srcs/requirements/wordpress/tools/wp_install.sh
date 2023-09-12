@@ -1,23 +1,22 @@
 #!/bin/bash
 
+#while ! mysql -h localhost -u naka -p washi &> /dev/null; do
+#	sleep 3
+#done
+
 # Install WP-CLI
-# apt-get update -y
-apt-get install curl -y
+apt update && apt upgrade -y
+apt install curl -y
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 chmod +x wp-cli.phar
+php wp-cli.phar
 mv wp-cli.phar /usr/local/bin/wp
-
-# Move where Wordpress is gonna be installed, dl WP, remove tar.gz archive
-cd /var/www/
-wget http://fr.wordpress.org/latest-fr_FR.tar.gz
-tar -xzvf latest-fr_FR.tar.gz
-rm latest-fr_FR.tar.gz
+cd /var/www/wordpress/
 
 
-# Télécharger WordPress si le fichier de configuration n'existe pas
-if [ ! -f /var/www/wordpress/wp-config.php]; then
-	# wp core download --allow-root
-	
+# Lors du premier build de l'image, pas encore de config.php
+if [ ! -f /var/www/wordpress/wp-config.php ]; then
+	wp core download --allow-root
 	# Créer le fichier de configuration WordPress
 	wp config create \
 		--allow-root \
@@ -41,7 +40,7 @@ if [ ! -f /var/www/wordpress/wp-config.php]; then
 		--allow-root \
 		--role=author $USER1_LOGIN $USER1_MAIL \
 		--user_pass=$USER1_PASSWORD \
-		--path='/var/www/wordpress' >> /log.txt
+		--path='/var/www/wordpress'
 fi
 
 

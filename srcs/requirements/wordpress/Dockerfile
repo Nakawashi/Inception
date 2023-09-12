@@ -6,6 +6,7 @@ RUN apt update && apt upgrade -y && apt install -y \
     wget \
     lsb-release \
     apt-transport-https \
+    mariadb-client \
     ca-certificates
 
 # Ajout du dépôt PHP et installation de PHP 8.2
@@ -25,5 +26,7 @@ RUN bash wp_install.sh
 RUN mkdir /run/php
 
 EXPOSE 9000
+
+#ENTRYPOINT ["bash", "wp_install.sh"]
 
 CMD ["php-fpm8.2", "-F", "-R"]
