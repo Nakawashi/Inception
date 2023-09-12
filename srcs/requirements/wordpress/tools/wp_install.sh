@@ -17,7 +17,9 @@ cd /var/www/wordpress/
 
 # Lors du premier build de l'image, pas encore de config.php
 if [ ! -f /var/www/wordpress/wp-config.php ]; then
+	# Installer WordPress
 	wp core download --allow-root
+
 	wp config create \
 		--allow-root \
 		--dbname=$MYSQL_DATABASE \
@@ -26,8 +28,8 @@ if [ ! -f /var/www/wordpress/wp-config.php ]; then
 		--dbhost=mariadb:3306 \
 		--path='/var/www/wordpress'
 	
-	# Installer WordPress
 	wp core install \
+		--allow-root \
 		--url=$DOMAIN_NAME \
 		--title="$SITE_TITLE" \
 		--admin_user=$ADMIN_USER \

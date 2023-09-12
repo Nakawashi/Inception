@@ -1,7 +1,5 @@
 FROM debian:buster
 
-MAINTAINER nakawashi
-
 RUN apt update && apt upgrade -y && apt install -y \
     wget \
     lsb-release \
@@ -21,12 +19,12 @@ COPY ./conf/php.conf /etc/php/8.2/fpm/pool.d/
 
 COPY ./tools/wp_install.sh /
 
-RUN bash wp_install.sh
+#RUN bash wp_install.sh
 
 RUN mkdir /run/php
 
 EXPOSE 9000
 
-#ENTRYPOINT ["bash", "wp_install.sh"]
+ENTRYPOINT ["bash", "wp_install.sh"]
 
 CMD ["php-fpm8.2", "-F", "-R"]
