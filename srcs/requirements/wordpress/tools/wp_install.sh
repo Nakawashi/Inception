@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mysql -h localhost -u $USER1_LOGIN -p $USER1_PASSWORD &> /dev/null;
 #while ! mysql -h localhost -u naka -p washi &> /dev/null; do
 #	sleep 3
 #done
@@ -17,7 +18,6 @@ cd /var/www/wordpress/
 # Lors du premier build de l'image, pas encore de config.php
 if [ ! -f /var/www/wordpress/wp-config.php ]; then
 	wp core download --allow-root
-	# Créer le fichier de configuration WordPress
 	wp config create \
 		--allow-root \
 		--dbname=$MYSQL_DATABASE \
